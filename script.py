@@ -1,9 +1,12 @@
 # Works only for DE log files
 import collections
 import os, re, time
+import win32com
 
 import matplotlib.pyplot as plt
 import numpy as np
+from win32com.client import Dispatch
+
 
 # Data labels, sizes, and colors are defined:
 print('Welcome to Worms Armageddon LogParser @Booyeoo')
@@ -22,7 +25,7 @@ thisGame = {}
 ext = '.log'
 
 # YEAR --- IMPORTANT for Stats
-year = 'Total' #for filtering on a specific year - set to 'Total' to get all
+year = '2023' #for filtering on a specific year - set to 'Total' to get all
 print("Scanning files in the specified path:" + path_of_the_directory)
 debug = False
 debugTeam = False
@@ -40,6 +43,71 @@ wormsStatsEasyCounter['Teams'].update({'Marcel': 'Marcel'})
 wormsStatsEasyCounter['Teams'].update({'Smie': 'Smie'})
 wormsStatsEasyCounter['Teams'].update({'Stevo': 'Stevo'})
 #wormsStatsEasyCounter['Teams'].update({'BICNIC': 'Nico'})
+# --- Prerequisites --- #
+def getLogFilesFromGames(path):
+    # Get all WAgame files in the folder
+    wagames = [f for f in os.listdir(path) if f.endswith('.WAgame') and os.path.isfile(os.path.join(path, f))]
+
+    shell = None
+    try:
+        # Create a Shell object
+        shell = win32com.client.Dispatch("Shell.Application")
+
+        print("Number of WAgame files: {}".format(len(wagames)))
+
+        # Iterate over each WAgame file and extract the logs
+        for wagame in wagames:
+            # Get the folder path and filename of the WAgame file
+            file_path = os.path.join(path, wagame)
+            file_name = os.path.basename(wagame)
+
+            print("Extracting logs from {}".format(file_name))
+
+            # Check if log file already exists
+            log_file_path = os.path.join(path, file_name.replace('.WAgame', '.log'))
+            log_file_exists = os.path.isfile(log_file_path)
+
+            print("Log file path: {}".format(log_file_path))
+            print("Log file exists: {}".format(log_file_exists))
+
+            # If log file does not exist, extract logs
+            if not log_file_exists:
+                # Create a folder object for the WAGame file
+                folder = shell.Namespace(os.path.dirname(file_path))
+
+                # Get the WAGame file object from the folder
+                file = folder.ParseName(os.path.basename(file_path))
+
+                # Get the context menu items for the file
+                context_menu = file.Verbs()
+
+                # Get the "Export Log" context menu item by index
+                extract_logs_menu_item = context_menu.Item(5)
+
+                if extract_logs_menu_item:
+                    # Invoke the "Extract Logs" context menu item
+                    extract_logs_menu_item.DoIt()
+                else:
+                    print("Could not find 'Export Log' context menu item for file {}".format(file_name))
+            else:
+                print("Log file already exists, skipping extraction")
+
+    except Exception as e:
+        print("An error occurred: {}".format(e))
+
+    finally:
+        # Release the Shell object
+        if shell:
+            try:
+                shell.Quit()
+            except Exception as e:
+                print("An error occurred while quitting the Shell object: {}".format(e))
+
+
+
+
+
+
 
 # ---- STATS ---- #
 #Creating a pie chart for the winner stats
@@ -310,6 +378,9 @@ def parseWormsLine(line, thisGame):
     return thisGame
 
 # ----->>> START MAIN LOOP<<<---- #
+
+getLogFilesFromGames(path_of_the_directory)
+
 if (year!='Total'):
     for filename in os.listdir(path_of_the_directory):
         f = os.path.join(path_of_the_directory, filename)
@@ -374,16 +445,19 @@ def generateWeaponStatisticForPlayer(player,timeframe='Weapons'):
     createBarChart2(weaponStats,player,getAmountOfGamesForThatPlayer)
 
 
+
+
+
 generateWinnerStatisticFor('BooyeooMajor',year)
 generateWinnerStatisticFor('BooyeooMajorhistorisch',year)
 generateWinnerStatisticFor('BICNICBooyeooMajorhistorisch',year)
-generateWinnerStatisticFor('BICNICBooyeooMajor',year)
-generateWinnerStatisticFor('Booyeoohistorisch',year)
-generateWinnerStatisticFor('Majorhistorisch',year)
-generateWeaponStatisticForPlayer('historisch')
-generateWeaponStatisticForPlayer('Major')
-generateWeaponStatisticForPlayer('Booyeoo')
-generateWeaponStatisticForPlayer('BICNIC')
+#generateWinnerStatisticFor('BICNICBooyeooMajor',year)
+#generateWinnerStatisticFor('Booyeoohistorisch',year)
+#generateWinnerStatisticFor('Majorhistorisch',year)
+#generateWeaponStatisticForPlayer('historisch')
+#generateWeaponStatisticForPlayer('Major')
+#generateWeaponStatisticForPlayer('Booyeoo')
+#generateWeaponStatisticForPlayer('BICNIC')
 
 
 
