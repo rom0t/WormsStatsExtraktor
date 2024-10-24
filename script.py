@@ -1,4 +1,3 @@
-# Works only for DE log files
 import collections
 import os, re, time
 import win32com
@@ -25,7 +24,7 @@ thisGame = {}
 ext = '.log'
 
 # YEAR --- IMPORTANT for Stats
-year = '2023' #for filtering on a specific year - set to 'Total' to get all
+year = '2024' #for filtering on a specific year - set to 'Total' to get all
 print("Scanning files in the specified path:" + path_of_the_directory)
 debug = False
 debugTeam = False
@@ -42,6 +41,7 @@ wormsStatsEasyCounter['Teams'].update({'5-UP': 'Computer5'})
 wormsStatsEasyCounter['Teams'].update({'Marcel': 'Marcel'})
 wormsStatsEasyCounter['Teams'].update({'Smie': 'Smie'})
 wormsStatsEasyCounter['Teams'].update({'Stevo': 'Stevo'})
+wormsStatsEasyCounter['Teams'].update({'( o ) ( o )': 'Major'})
 #wormsStatsEasyCounter['Teams'].update({'BICNIC': 'Nico'})
 # --- Prerequisites --- #
 def getLogFilesFromGames(path):
@@ -184,7 +184,7 @@ def createBarChart1(weaponsAndValuesAsDict, playerForTitle, divisor):
     for bar in bars:
         bar.set_color('green')
         bar.set_edgecolor('white')
-       # ax.text(bar.get_x() + bar.get_width()/2, bar.get_y() + bar.get_height() / 2, '{:.0%}'.format(bar.get_width()), ha='left', va='center')
+    # ax.text(bar.get_x() + bar.get_width()/2, bar.get_y() + bar.get_height() / 2, '{:.0%}'.format(bar.get_width()), ha='left', va='center')
     plt.show()
 
 # --- HELPERS ---
@@ -296,7 +296,7 @@ def parseWormsLine(line, thisGame):
             if debugWeapons: print(wormsStatsEasyCounter[player]['Team'])
         else:
             wormsStatsEasyCounter.update({player: {'Team': team}})
-         #   wormsStatsEasyCounter.update({player: {'GamesCount': 1}})
+        #   wormsStatsEasyCounter.update({player: {'GamesCount': 1}})
 
         if wormsStatsEasyCounter.__contains__('Teams'):
             if player not in wormsStatsEasyCounter['Teams']:
@@ -446,8 +446,6 @@ def generateWeaponStatisticForPlayer(player,timeframe='Weapons'):
 
 
 
-
-
 generateWinnerStatisticFor('BooyeooMajor',year)
 generateWinnerStatisticFor('BooyeooMajorhistorisch',year)
 generateWinnerStatisticFor('BICNICBooyeooMajorhistorisch',year)
@@ -458,6 +456,3 @@ generateWinnerStatisticFor('BICNICBooyeooMajorhistorisch',year)
 #generateWeaponStatisticForPlayer('Major')
 #generateWeaponStatisticForPlayer('Booyeoo')
 #generateWeaponStatisticForPlayer('BICNIC')
-
-
-
