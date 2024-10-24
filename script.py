@@ -308,7 +308,7 @@ def parseWormsLine(line, thisGame):
         return thisGame
 
     # Weapon counting
-    elif (len(re.findall('(\[.+\]) ••• (?P<Teamname>.+)\s\((?P<Playername>.+)\)(\sfires\s)(?P<Weapon>.+)', line)) > 0):
+    elif (len(re.findall('(\[.+]) ••• (?P<Teamname>.+)\s\((?P<Playername>.+)\)(\sfires\s)(?P<Weapon>.+)', line)) > 0):
         lineRegExtract = (
             #   re.split('(\[.+\]) ••• (?P<Teamname>.+)\s\((?P<Playername>.+)\)(\sfires\s)(?P<Weapon>.+)', line))
             re.split('(\((?:.(?!\())+( fires))\s(.+$)', line))
